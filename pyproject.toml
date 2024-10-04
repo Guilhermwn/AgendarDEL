@@ -1,0 +1,27 @@
+[tool.poetry]
+name = "agendardel"
+version = "0.1.0"
+description = ""
+authors = ["Guilhermwn <limaoplaykglp@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+fastapi = "^0.115.0"
+uvicorn = "^0.31.0"
+htpy = "^24.9.1"
+sqlmodel = "^0.0.22"
+alembic = "^1.13.3"
+beautifulsoup4 = "^4.12.3"
+pydantic = {extras = ["email"], version = "^2.9.2"}
+pydantic-settings = "^2.5.2"
+sqlalchemy-sqlitecloud = "^0.1.2"
+
+[tool.poetry.group.dev.dependencies]
+pyjwt = "^2.9.0"
+python-decouple = "^3.8"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

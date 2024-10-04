@@ -1,0 +1,10 @@
+fastapi==0.115.0
+uvicorn==0.31.0
+htpy==24.9.1
+sqlmodel==0.0.22
+alembic==1.13.3
+beautifulsoup4==4.12.3
+pydantic==2.9.2
+email-validator==2.1.2
+pydantic-settings==2.5.2
+sqlalchemy-sqlitecloud==0.1.2
