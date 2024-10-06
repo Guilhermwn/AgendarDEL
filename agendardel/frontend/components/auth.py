@@ -1,5 +1,7 @@
 import htpy as h
+from markupsafe import Markup
 from .page import basepage
+
 
 uk_icon = h.Element("uk-icon")
 
@@ -17,7 +19,7 @@ def FormInput(
         h.div(".uk-inline.uk-width-1-1")[
             (h.span(f".uk-form-icon {icon_flip}")[uk_icon(icon=icon)] if icon else None),
             h.input(
-                f"#{input_id}.uk-input", 
+                f".uk-input", 
                 type=_type, 
                 name=input_name, 
                 aria_label="Not clickable icon", 
@@ -26,7 +28,8 @@ def FormInput(
         ]
     ]
 
-def Form(title:str, inputs:list[dict]):
+
+def Form(title:str, endpoint:str, inputs:list[dict]):
     form_inputs = []
     for input in inputs:
         label = input.get("label", "")
@@ -37,12 +40,13 @@ def Form(title:str, inputs:list[dict]):
             
     return h.form(
         f"#form-{title}-id.uk-form-stacked",
-        hx_post="/API/V1/user/register",
+        hx_post=f"/API/V1/user/{endpoint}",
         hx_headers='{"Content-Type": "application/json"}',
         hx_ext="json-enc",
         hx_trigger="submit", 
-        hx_swap="outerHTML",
+        hx_swap="innerHTML",
         hx_target=f"#response-{title.lower()}",
+        hx_target_error=f"#response-{title.lower()}"
     )[
         form_inputs,
         h.button(".uk-button.uk-button-default.uk-width-1-1", type="submit")[title]
@@ -59,34 +63,36 @@ def AuthTabs():
 def AuthSwitcher():
     return h.ul(".uk-switcher.mt-5")[
         h.li[
-            Form(title="Login", inputs=[
-                {"label":"Username", "icon":"User"},
-                {"label":"Password", "icon":"key-round", "type":"password"}
-            ])],
+            h.div(hx_ext="response-targets")[
+                h.comment("FORMULÁRIO DE LOGIN"),
+                Form(
+                    title="Login",
+                    endpoint="login", 
+                    inputs=[
+                        {"label":"Username", "icon":"User"},
+                        {"label":"Password", "icon":"key-round", "type":"password"}
+                ]),
+                h.div("#response-login")
+            ]
+        ],
         h.li[
-            Form(title="Signup", inputs=[
-                {"label":"Username", "icon":"user","name":"username"},
-                {"label":"Email", "icon":"mail", "type": "email", "name":"email"},
-                {"label":"Password", "icon":"key-round", "type":"password", "name":"password"}
-            ]),
-            h.div("#response-signup")
-            ],
+            h.div(hx_ext="response-targets")[
+                h.comment("FORMULÁRIO DE SIGNUP"),
+                Form(
+                    title="Signup", 
+                    endpoint="register",
+                    inputs=[
+                    {"label":"Username", "icon":"user","name":"username"},
+                    {"label":"Email", "icon":"mail", "type": "email", "name":"email"},
+                    {"label":"Password", "icon":"key-round", "type":"password", "name":"password"}
+                ]),
+                h.div("#response-signup")
+            ]
+        ],
     ]
 
 def AuthPage() -> h.Element:
     return basepage(
-        extra_head=[
-            h.comment("Extra Head"),
-            h.script(src="https://unpkg.com/htmx-ext-json-enc@2.0.1/json-enc.js"),
-            h.script[
-                """
-                document.body.addEventListener('htmx:afterSwap', function(evt) {
-                    const form = document.querySelector("#my-form");
-                    form.reset();
-                });
-                """
-            ]
-        ],
         content=[
             h.div(".uk-flex.uk-flex-center.uk-flex-middle.uk-background-muted")[
                 h.div(".uk-width-large")[

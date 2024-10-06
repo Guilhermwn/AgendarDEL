@@ -3,7 +3,7 @@
 from fastapi import FastAPI
 
 from agendardel.backend.database import create_db_and_tables
-from agendardel.backend.config import settings
+from agendardel.config import settings
 from agendardel import backend
 from agendardel import frontend
 
@@ -16,7 +16,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     title="AgendarDEL",
     description="Aplicação Full Stack AgendarDEL | Frontend + Backend",
-    version=settings.API_Version,
+    version=settings.api.API_Version,
     contact={
         "name": "Guilhermwn",
         "email": "guilhermwn.franco@gmail.com",
@@ -27,4 +27,4 @@ app = FastAPI(
 )
 
 app.include_router(frontend.main.router)
-app.include_router(backend.main.router, prefix=settings.API_V1)
+app.include_router(backend.main.router, prefix=settings.api.API_V1)

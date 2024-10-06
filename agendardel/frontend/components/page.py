@@ -7,7 +7,10 @@ STYLE_SETTINGS = [
     h.link(rel="stylesheet", href="https://unpkg.com/franken-ui@1.1.0/dist/css/core.min.css"),
     h.script(src="https://unpkg.com/franken-ui@1.1.0/dist/js/core.iife.js", type="module"),
     h.script(src="https://unpkg.com/franken-ui@1.1.0/dist/js/icon.iife.js", type="module"),
-    h.script(src="https://unpkg.com/htmx.org@2.0.2"),
+    h.comment("HTMX SCRIPTS"),
+    h.script(src="https://unpkg.com/htmx.org@2.0.3"),
+    h.script(src="https://unpkg.com/htmx-ext-response-targets@2.0.0/response-targets.js"), 
+    h.script(src="https://unpkg.com/htmx-ext-json-enc@2.0.1/json-enc.js"),   
     h.style[
         Markup("""
         :root {
