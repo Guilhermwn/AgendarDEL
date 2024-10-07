@@ -27,3 +27,7 @@ class UserPublic(UserBase):
 class User(UserBase, table=True):
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
     password: str
+
+class UserLogin(SQLModel):
+    username: str
+    password: str

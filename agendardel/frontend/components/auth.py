@@ -29,7 +29,7 @@ def FormInput(
     ]
 
 
-def Form(title:str, endpoint:str, inputs:list[dict]):
+def Form(title:str, endpoint:str, json:bool, inputs:list[dict]):
     form_inputs = []
     for input in inputs:
         label = input.get("label", "")
@@ -42,7 +42,7 @@ def Form(title:str, endpoint:str, inputs:list[dict]):
         f"#form-{title}-id.uk-form-stacked",
         hx_post=f"/API/V1/user/{endpoint}",
         hx_headers='{"Content-Type": "application/json"}',
-        hx_ext="json-enc",
+        hx_ext="json-enc" if json else "",
         hx_trigger="submit", 
         hx_swap="innerHTML",
         hx_target=f"#response-{title.lower()}",
@@ -68,9 +68,10 @@ def AuthSwitcher():
                 Form(
                     title="Login",
                     endpoint="login", 
+                    json=False,
                     inputs=[
-                        {"label":"Username", "icon":"User"},
-                        {"label":"Password", "icon":"key-round", "type":"password"}
+                        {"label":"Username", "icon":"User", "name":"username"},
+                        {"label":"Password", "icon":"key-round", "type":"password", "name":"password"},
                 ]),
                 h.div("#response-login")
             ]
@@ -81,6 +82,7 @@ def AuthSwitcher():
                 Form(
                     title="Signup", 
                     endpoint="register",
+                    json=True,
                     inputs=[
                     {"label":"Username", "icon":"user","name":"username"},
                     {"label":"Email", "icon":"mail", "type": "email", "name":"email"},

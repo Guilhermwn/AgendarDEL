@@ -17,11 +17,14 @@ pydantic = {extras = ["email"], version = "^2.9.2"}
 pydantic-settings = "^2.5.2"
 sqlalchemy-sqlitecloud = "^0.1.2"
 python-dotenv = "^1.0.1"
+python-jose = {extras = ["cryptography"], version = "^3.3.0"}
+passlib = {extras = ["bcrypt"], version = "^1.7.4"}
 
 [tool.poetry.group.dev.dependencies]
 pyjwt = "^2.9.0"
 python-decouple = "^3.8"
 python-fasthtml = "^0.6.9"
+fastapi-login = "^1.10.2"
 
 
 [build-system]
