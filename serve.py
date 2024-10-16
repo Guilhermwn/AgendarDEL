@@ -1,4 +1,3 @@
-import webview
 import uvicorn
 from agendardel.main import app
 
