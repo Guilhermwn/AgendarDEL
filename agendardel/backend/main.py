@@ -1,9 +1,5 @@
 # agendardel/backend/main.py
 
-import logging
-from tkinter import N
-logging.getLogger('passlib').setLevel(logging.ERROR)
-
 from fastapi import (
     APIRouter, 
     HTTPException, 
