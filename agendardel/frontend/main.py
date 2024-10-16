@@ -2,10 +2,13 @@
 
 from fastapi import APIRouter, Request
 from fastapi.responses import RedirectResponse
+from sqlmodel import Session, select
 
-from ..utils import HTPYResponse
+from agendardel.backend.models import Event, User
+from agendardel.backend.database import engine
+from agendardel.utils import HTPYResponse
+from agendardel.security import verify_token
 from .components import auth, dashboard
-from agendardel.backend.main import verify_token
 
 router = APIRouter()
 
@@ -23,4 +26,9 @@ def dashboardpage(request: Request):
     username = verify_token(request, raise_exception=False)
     if not username:
         return RedirectResponse("/")
-    return HTPYResponse(dashboard.DashboardPage())
+    
+    with Session(engine) as session:
+        statement = select(User).where(User.username == username)
+        logged_user: User | None = session.exec(statement).first()
+        user_events = logged_user.events
+    return HTPYResponse(dashboard.DashboardPage(logged_user, user_events))
