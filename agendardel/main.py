@@ -1,6 +1,6 @@
 # agendardel/main.py
 
-from fastapi import FastAPI, Request
+from fastapi import FastAPI
 
 from agendardel.backend.database import create_db_and_tables
 from agendardel.config import settings
@@ -28,4 +28,3 @@ app = FastAPI(
 
 app.include_router(frontend.main.router)
 app.include_router(backend.main.router, prefix=settings.api.API_V1)
-

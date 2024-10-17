@@ -54,7 +54,10 @@ def user_login(request: Request, form_data: OAuth2PasswordRequestForm = Depends(
             data={"sub": user.username}, 
             expires_delta=access_token_expires
         )
-        response = JSONResponse(content={"access_token": access_token, "token_type": "bearer"})
+        response = JSONResponse(content={
+            "access_token": access_token, 
+            "token_type": "bearer"
+        })
         response.set_cookie(
             key="access_token", 
             value=access_token, 
@@ -70,7 +73,10 @@ def user_login(request: Request, form_data: OAuth2PasswordRequestForm = Depends(
 
 @router.get("/user/logout")
 def user_logout(request: Request, response: Response):
-    pass
+    response = Response()
+    response.delete_cookie(key="access_token")
+    response.headers["HX-Redirect"] = "/"
+    return response
 
 
 @router.post("/user/register", response_model=UserPublic, tags=["Backend | User"])
@@ -150,3 +156,5 @@ def get_events_from_user(username:str):
             raise HTTPException(404, detail="User not found")
         return db_user.events
         
+
+
