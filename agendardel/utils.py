@@ -13,14 +13,6 @@ def h_render(element:h.Node) -> str:
     string = bs4.BeautifulSoup(s, features="html.parser")
     return string.prettify(formatter=formatter)
 
-# class HTPYResponse(Response):
-#     media_type = "text/html"
-
-#     def __init__(self, content: h.Node, status_code: int = 200):
-#         html_content = h_render(content)
-#         super().__init__(content=html_content, status_code=status_code)
-
-
 class HTPYResponse(Response):
     media_type = "text/html"
 
