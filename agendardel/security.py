@@ -10,7 +10,7 @@ from typing import Optional
 
 SECRET_KEY = os.getenv("AUTH_SECRET_KEY")
 ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
+ACCESS_TOKEN_EXPIRE_MINUTES = 86400
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl=settings.api.API_V1+"/user/login")
 
 

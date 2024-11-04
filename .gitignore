@@ -7,3 +7,4 @@ tests/
 *.db
 *.code-workspace
 *.env
+window.py

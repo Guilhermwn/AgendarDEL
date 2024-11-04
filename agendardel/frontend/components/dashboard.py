@@ -1,4 +1,5 @@
 import uuid
+from fastapi import Request
 import htpy as h
 from typing import Optional
 
@@ -10,13 +11,13 @@ from .page import basepage
 uk_icon = h.Element("uk-icon")
 
 
-def navbar():
+def navbar(host):
     return h.nav(".uk-navbar-container.uk-padding", uk_navbar="",uk_dropnav="mode: click", style="z-index: 8888;")[
         h.div(".uk-navbar-left")[h.h3(".uk-h3")["Dashboard"]],
         h.div(".uk-navbar-right.")[
         h.ul(".uk-subnav")[
             h.li[
-                h.a[h.img(".uk-border-pill", src="https://franken-ui.dev/images/avatar.jpg", width="50", height="50")],
+                h.a[h.img(".uk-border-pill", src=f"{host}static/no-user.webp", width="50", height="50")],
                 h.div(".uk-drop.uk-dropdown")[
                     h.ul(".uk-dropdown-nav.uk-nav")[
                         h.li[h.a(href="#")["Perfil"]],
@@ -34,7 +35,7 @@ def short_text(text:str, amount:int):
             else " ".join(text.split()[:amount])+"..."][0]
 
 def delete_event_modal(event_id:uuid.UUID):
-    return h.div("#delete-event-modal.uk-modal.uk-flex-top", uk_modal="", style="z-index: 9999;")[
+    return h.div(f"#delete-event-{event_id}-modal.uk-modal.uk-flex-top", uk_modal="", style="z-index: 9999;")[
         h.div(".uk-modal-body.uk-modal-dialog.uk-margin-auto-vertical")[
             h.div(".uk-modal-header")[h.h2(".uk-modal-title")["Deletar evento ?"]],
             h.div(".uk-modal-footer.uk-text-right")[
@@ -72,7 +73,7 @@ def eventlist_item(event: Event):
             ]
         ],
         h.div(".uk-flex.uk-flex-right.uk-width-auto.uk-visible@s")[  # Botões visíveis apenas em telas grandes
-            h.a(".uk-icon-button.uk-button-danger.uk-margin-small-right", uk_toggle="target: #delete-event-modal")[  # Botão "Excluir"
+            h.a(".uk-icon-button.uk-button-danger.uk-margin-small-right", uk_toggle=f"target: #delete-event-{event.id}-modal")[  # Botão "Excluir"
                 uk_icon(icon="trash-2")
             ],
             h.a(
@@ -83,12 +84,12 @@ def eventlist_item(event: Event):
                 )[ # Botão "Abrir"
                 uk_icon(icon="external-link")
             ],
-            h.a(".uk-icon-button.uk-button-primary")[  # Botão "Editar"
+            h.a(".uk-icon-button.uk-button-primary", href=f"/dashboard/{event.id}/edit")[  # Botão "Editar"
                 uk_icon(icon="pencil")
             ]
         ],
         h.div(".uk-flex.uk-flex-right.uk-width-1-1.uk-hidden@s.uk-margin-small-top")[  # Botões visíveis apenas em telas pequenas e alinhados abaixo do texto
-            h.a(".uk-width-1-2.uk-icon-button.uk-button-danger.uk-margin-small-right", uk_toggle="target: #delete-event-modal")[  # Botão "Excluir"
+            h.a(".uk-width-1-2.uk-icon-button.uk-button-danger.uk-margin-small-right", uk_toggle=f"target: #delete-event-{event.id}-modal")[  # Botão "Excluir"
                 uk_icon(icon="trash-2")
             ],
             h.a(
@@ -99,7 +100,7 @@ def eventlist_item(event: Event):
             )[  # Botão "Abrir"
                 uk_icon(icon="external-link")
             ],
-            h.a(".uk-width-1-2.uk-icon-button.uk-button-primary")[  # Botão "Editar"
+            h.a(".uk-width-1-2.uk-icon-button.uk-button-primary", href=f"/dashboard/{event.id}/edit")[  # Botão "Editar"
                 uk_icon(icon="pencil")
             ]
         ],
@@ -118,93 +119,37 @@ def eventlist(user_events: list[Event]):
         [eventlist_item(event) for event in user_events]
     ]
 
-
-def new_event_form_input(
-        name: str,
-        input_type: str,
-        label: Optional[str] = None,
-        placeholder: Optional[str] = None,
-        required: bool = False,
-        value: Optional[str] = None
-):
-    input_attrs = {
-        "type": input_type,
-        "name": name,
-        "id": f"event-{name}",
-        "class": "uk-input",
-        "aria-label": f"{label}" if label else "Form input",
-        "required": required
-    }
-    
-    if placeholder:
-        input_attrs["placeholder"] = placeholder
-    if value:
-        input_attrs["value"] = value
-
-    # Se um label for fornecido, cria um campo com label
-    if label:
-        return h.div(".uk-margin")[
-            h.label(".uk-form-label", for_=f"event-{name}")[label],
-            h.div(".uk-form-controls")[
-                h.input(**input_attrs)
+def breadcrumb(itens: dict[str,str]):
+    return h.div(".uk-container.uk-margin")[
+        h.nav(aria_label="Breadcrumb")[
+            h.ul(".uk-breadcrumb")[
+                [ h.li[h.a(href=item[1])[item[0]]] for item in itens.items()],
             ]
         ]
-    # Caso contrário, apenas cria o input sem label (para hidden, por exemplo)
-    else:
-        return h.input(**input_attrs)
-
-def new_event_form(owner_id: str):
-    return h.form(
-        ".uk-form-stacked",
-        hx_post="/API/V1/events/add",
-        hx_ext="json-enc",
-        hx_trigger="submit"
-    )[
-        new_event_form_input(label="Título", name="title", input_type="text", placeholder="Meu evento...", required=True),
-        new_event_form_input(label="Descrição", name="description", input_type="text", placeholder="Um evento administrado pelo DEL.", required=False),
-        new_event_form_input(label="Data", name="date", input_type="date", placeholder="17/10/2024", required=True),
-        new_event_form_input(label="Duração", name="duration", input_type="number", placeholder="15 min...", required=True),
-        new_event_form_input(name="owner_id", input_type="hidden", value=f"{owner_id}"),
-        h.button(".uk-button.uk-button-primary.uk-width-1-1", type_="submit")["Criar"]
-    ]
-
-
-def new_event_modal(owner_id:str):
-    return h.div("#new-event-modal.uk-modal.uk-flex-top", uk_modal="", style="z-index: 9999;")[
-        h.div(".uk-modal-body.uk-modal-dialog.uk-margin-auto-vertical")[
-            h.div(".uk-modal-header")[h.h2(".uk-modal-title")["Title"]],
-            h.div(".uk-modal-body")[
-                new_event_form(owner_id)
-            ],
-            h.div(".uk-modal-footer.uk-text-right")[
-                h.button(".uk-modal-close.uk-button.uk-button-default", type_="button")["Cancelar"],
-            ]
-        ]
-    ]
+    ],
 
 def DashboardPage(
         user_data: User,
-        user_events: list[Event]
+        user_events: list[Event],
+        request: Request
 ) -> h.Element:
     return basepage(
         page_title="Dashboard",
         content=[
-            navbar(),
-            h.div(".uk-section")[
-                h.div(".uk-container")[
-                    h.div(".uk-card.uk-card-default.uk-padding-small")[
-                        h.div(".uk-card-header.uk-flex.uk-flex-between.uk-flex-stretch")[
-                            h.h4(".uk-h4")[f"Eventos de {user_data.username}"],
-                            h.button(".uk-button.uk-button-primary", 
-                                    type_="button", 
-                                    uk_toggle="target: #new-event-modal")[
-                                    uk_icon(icon="plus"),"NOVO"
-                            ],
-                            new_event_modal(user_data.id)
+            navbar(request.base_url),
+            breadcrumb({
+                "Dashboard": ""
+            }),
+            h.div(".uk-container.uk-margin-bottom")[
+                h.div(".uk-card.uk-card-default.uk-padding-small")[
+                    h.div(".uk-card-header.uk-flex.uk-flex-between.uk-flex-stretch")[
+                        h.h4(".uk-h4")[f"Eventos de {user_data.username}"],
+                        h.a(".uk-button.uk-button-primary", href="/dashboard/new-event")[
+                                uk_icon(icon="plus"),"NOVO"
                         ],
-                        h.div(".uk-card-body")[eventlist(user_events)]
-                    ]
-                ],
-            ]
+                    ],
+                    h.div(".uk-card-body")[eventlist(user_events)],
+                ]
+            ],
         ]
     )
