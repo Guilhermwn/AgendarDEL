@@ -1,5 +1,5 @@
 import uvicorn
-
+from agendardel.main import app  # noqa: F401
 if __name__ == '__main__':
 
     hosts = ["127.0.0.1", "192.168.1.10", "10.25.1.115"]
