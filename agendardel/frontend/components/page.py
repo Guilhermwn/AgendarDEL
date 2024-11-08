@@ -1,13 +1,17 @@
 import htpy as h
 from markupsafe import Markup
+
+# Custom HTML Tags
+# Franken UI WebComponent Tags
 uk_theme_switcher = h.Element("uk-theme-switcher")
 uk_icon = h.Element("uk-icon")
 
 STYLE_SETTINGS = [
+    h.comment("FRANKEN UI SOURCES"),
     h.link(rel="stylesheet", href="https://unpkg.com/franken-ui@1.1.0/dist/css/core.min.css"),
     h.script(src="https://unpkg.com/franken-ui@1.1.0/dist/js/core.iife.js", type="module"),
     h.script(src="https://unpkg.com/franken-ui@1.1.0/dist/js/icon.iife.js", type="module"),
-    h.comment("HTMX SCRIPTS"),
+    h.comment("HTMX SOURCES"),
     h.script(src="https://unpkg.com/htmx.org@2.0.3"),
     h.script(src="https://unpkg.com/htmx-ext-response-targets@2.0.0/response-targets.js"), 
     h.script(src="https://unpkg.com/htmx-ext-json-enc@2.0.1/json-enc.js"),   
@@ -73,6 +77,7 @@ def basepage(page_title:str=None, extra_head:h.Node=None,content:h.Node=None) ->
     return h.html(lang="pt-BR")[
         basehead(page_title, extra_head),
         h.body(".bg-background.text-foreground")[
+            h.comment("GENERATED PAGE CONTENT"),
             content,
         ]
     ]
