@@ -11,13 +11,16 @@ from agendardel.backend.database import engine
 from agendardel.utils import HTPYResponse
 from agendardel.security import verify_token
 from .components import auth, dashboard, subscribe, new_event, edit
+from agendardel.logger import logger
 
+logger.info("FRONTEND | Inicializado")
 
 router = APIRouter()
 
 
 @router.get("/", response_class=HTPYResponse, tags=["Frontend | Page"])
 def authpage(request: Request):
+
     username = verify_token(request, raise_exception=False)
     if username:
         return RedirectResponse("/dashboard")
@@ -33,7 +36,6 @@ def dashboardpage(request: Request, response: Response):
     with Session(engine) as session:
         statement = select(User).where(User.username == username)
         logged_user: User | None = session.exec(statement).first()
-        print(logged_user)
         if logged_user:
             user_events = logged_user.events
         else:

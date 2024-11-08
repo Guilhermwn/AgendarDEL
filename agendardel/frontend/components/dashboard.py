@@ -1,9 +1,6 @@
 import uuid
 from fastapi import Request
 import htpy as h
-from typing import Optional
-
-from markupsafe import Markup
 
 from agendardel.backend.models import Event, User
 from .page import basepage

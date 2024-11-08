@@ -28,6 +28,10 @@ from agendardel.security import (
     hash_pwd
 )
 
+from agendardel.logger import logger
+
+logger.info("API | Inicializada")
+
 load_dotenv()
 
 router = APIRouter()
@@ -111,18 +115,21 @@ def user_register(user: UserCreate, request: Request):
             session.add(new_user)
             session.commit() 
             session.refresh(new_user)
+
+            logger.info(f"API | Novo usuário cadastrado [ {new_user.username} ]")
+
             if htmx:
                 return LabelResponse.success("Usuário criado com sucesso.")
             else:
                 return new_user
 
 
-@router.get("/user/users", response_model=list[UserPublic], tags=["Backend | User"])
-def list_users():
-    with Session(engine) as session:
-        statement = select(User)
-        users: list[User] = session.exec(statement).all()
-        return users
+# @router.get("/user/users", response_model=list[UserPublic], tags=["Backend | User"])
+# def list_users():
+#     with Session(engine) as session:
+#         statement = select(User)
+#         users: list[User] = session.exec(statement).all()
+#         return users
 
 
 # === USER ENDPOINTS ===
@@ -157,12 +164,12 @@ def add_event(event: EventCreate, request: Request):
         else:
             return new_event
 
-@router.get("/events/all", response_model=list[EventBase], tags=["Backend | Event"])
-def get_events():
-    with Session(engine) as session:
-        statement = select(Event)
-        events: list[Event] = session.exec(statement).all()
-        return events
+# @router.get("/events/all", response_model=list[EventBase], tags=["Backend | Event"])
+# def get_events():
+#     with Session(engine) as session:
+#         statement = select(Event)
+#         events: list[Event] = session.exec(statement).all()
+#         return events
     
 @router.get("/events/{username}", tags=["Backend | Event"])
 def get_events_from_user(username:str):
