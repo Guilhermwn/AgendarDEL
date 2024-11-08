@@ -7,7 +7,7 @@ if __name__ == '__main__':
     uvicorn.run(
         "agendardel.main:app", 
         host=hosts[0], 
-        reload=reloads[0], 
+        reload=reloads[1], 
         log_level="warning", 
         log_config=None
     )

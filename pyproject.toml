@@ -19,6 +19,7 @@ sqlalchemy-sqlitecloud = "^0.1.2"
 python-dotenv = "^1.0.1"
 python-jose = {extras = ["cryptography"], version = "^3.3.0"}
 bcrypt = "^4.2.0"
+colorama = "^0.4.6"
 
 [tool.poetry.group.dev.dependencies]
 pyjwt = "^2.9.0"
